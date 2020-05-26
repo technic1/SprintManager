@@ -6,13 +6,24 @@ public class Task {
     private String number;
     private String title;
 
-    private User author;
+    private Integer authorId;
+    private String authorName;
 
     private String startDate;
     private String endDate;
 
     private TaskState taskState;
     private Integer rate;
+
+    public String getTaskPriority() {
+        return taskPriority.name();
+    }
+
+    public void setTaskPriority(TaskPriority taskPriority) {
+        this.taskPriority = taskPriority;
+    }
+
+    private TaskPriority taskPriority;
 
     public Task() {
 
@@ -23,6 +34,46 @@ public class Task {
         this.number = number;
         this.startDate = start;
         this.endDate = end;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getTaskState() {
+        return taskState.name();
+    }
+
+    public void setTaskState(TaskState taskState) {
+        this.taskState = taskState;
+    }
+
+    public Integer getRate() {
+        return rate;
+    }
+
+    public void setRate(Integer rate) {
+        this.rate = rate;
     }
 
     public Integer getId() {
@@ -56,4 +107,6 @@ public class Task {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+
+
 }
