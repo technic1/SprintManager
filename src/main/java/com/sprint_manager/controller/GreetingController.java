@@ -1,13 +1,17 @@
-package com.example.SprintManager.controller;
+package com.sprint_manager.controller;
 
-import com.example.SprintManager.domain.Task;
-import com.example.SprintManager.repos.TaskRepo;
+import com.sprint_manager.domain.Task;
+import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,7 +29,7 @@ public class GreetingController {
         return "greeting";
     }
 
-    @GetMapping
+    @GetMapping("/")
     public String main(Map<String, Object> model) {
         Iterable<Task> tasks = taskRepo.findAll();
 
@@ -34,18 +38,19 @@ public class GreetingController {
         return "main";
     }
 
-    @PostMapping
+    @PostMapping("/")
     public String addTask(
             @RequestParam String number,
             @RequestParam String start,
             @RequestParam String end,
             Map<String, Object> model
-    ) {
-        Task task = new Task(number, start, end);
+    ) throws ParseException {
+
+        Task task = new Task("auto", number, start, end);
 
         taskRepo.save(task);
 
-        Iterable<Task> tasks = taskRepo.findAll();
+        List<Task> tasks = taskRepo.findAll();
 
         model.put("tasks", tasks);
 

@@ -10,18 +10,21 @@
         <button type="submit">Add task</button>
     </form>
 
-    List of tasks:
-    <div>
+    Backlog:
         <#list tasks as task>
-        <div>
-            Task number: ${task.number}
-        </div>
-        <div>
-            Start date:${task.start}
-        </div>
-        <div>
-            End date${task.end}
-        </div>
+            <div>
+                Task number: ${task.number}
+            </div>
+            <#if task.startDate??>
+                <div>
+                    Start date: ${task.startDate}
+                </div>
+            </#if>
+            <#if task.endDate??>
+                <div>
+                    End date: ${task.endDate}
+                </div>
+            </#if>
         </#list>
     </div>
 
