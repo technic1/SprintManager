@@ -13,7 +13,7 @@ public class Task {
     private String endDate;
 
     private TaskState taskState;
-    private Integer rate;
+    private Integer estimate;
 
     public String getTaskPriority() {
         return taskPriority.name();
@@ -68,12 +68,12 @@ public class Task {
         this.taskState = taskState;
     }
 
-    public Integer getRate() {
-        return rate;
+    public Integer getEstimate() {
+        return estimate;
     }
 
-    public void setRate(Integer rate) {
-        this.rate = rate;
+    public void setEstimate(Integer rate) {
+        this.estimate = rate;
     }
 
     public Integer getId() {

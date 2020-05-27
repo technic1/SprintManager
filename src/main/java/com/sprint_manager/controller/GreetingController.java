@@ -5,9 +5,7 @@ import com.sprint_manager.repos.TaskRepo;
 import com.sprint_manager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +31,8 @@ public class GreetingController {
         return "greeting";
     }
 
-    @GetMapping("/")
+//    @GetMapping("/")
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String main(Map<String, Object> model) {
         Iterable<Task> tasks = taskRepo.findAll();
 
@@ -42,17 +41,29 @@ public class GreetingController {
         return "main";
     }
 
-    @PostMapping("/")
+    @RequestMapping(value = "/", method = RequestMethod.POST, params = "add")
     public String addTask(
             @RequestParam String title,
-            @RequestParam String start,
             @RequestParam String priority,
-            @RequestParam String rate,
+            @RequestParam String estimate,
             Map<String, Object> model
     ) throws ParseException {
+        taskService.addTask(title, priority, estimate);
 
+        List<Task> tasks = taskRepo.findAll();
 
-        taskService.addTask(title, start, priority, rate);
+        model.put("tasks", tasks);
+
+        return "main";
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.POST, params = "delete")
+    public String addTask(
+            @RequestParam String id,
+            Map<String, Object> model
+    ) {
+        System.out.println("deleting task");
+        taskService.deleteTask(id);
 
         List<Task> tasks = taskRepo.findAll();
 

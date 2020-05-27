@@ -23,7 +23,7 @@ public class TaskMapper implements RowMapper<Task> {
         }
         task.setTaskState(TaskState.valueOf(rs.getString("state")));
         task.setTaskPriority(TaskPriority.valueOf(rs.getString("priority")));
-        task.setRate(rs.getInt("rate"));
+        task.setEstimate(rs.getInt("estimate"));
         task.setAuthorName(rs.getString("full_name"));
 
         return task;
