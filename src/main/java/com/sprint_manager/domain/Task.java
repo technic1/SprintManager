@@ -1,5 +1,7 @@
 package com.sprint_manager.domain;
 
+import java.util.Date;
+
 public class Task {
 
     private Integer id;
@@ -7,10 +9,11 @@ public class Task {
     private String title;
 
     private Integer authorId;
+    private Integer sprintId;
     private String authorName;
 
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
 
     private TaskState taskState;
     private Integer estimate;
@@ -30,10 +33,18 @@ public class Task {
     }
 
 
-    public Task(String title, String number, String start, String end) {
+    public Task(String title, String number, Date start, Date end) {
         this.number = number;
         this.startDate = start;
         this.endDate = end;
+    }
+
+    public Integer getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Integer sprintId) {
+        this.sprintId = sprintId;
     }
 
     public String getTitle() {
@@ -92,19 +103,20 @@ public class Task {
         this.number = number;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
+//        return endDate==null?null:endDate.toString();
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

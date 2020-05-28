@@ -23,18 +23,16 @@ public class TaskService {
 
         task.setTitle(title);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String startDate = formatter.format(new Date());
-        task.setStartDate(startDate);
+        task.setStartDate(new Date());
         task.setTaskPriority(TaskPriority.valueOf(priority));
         task.setEstimate(Integer.valueOf(rate));
 
         //1 for admin
         task.setAuthorId(1);
-        task.setTaskState(TaskState.DRAFT);
+        task.setTaskState(TaskState.OPEN);
 
         String number = "PRJ-";
-        List<Task> tasks = taskRepo.findAll();
+        List<Task> tasks = taskRepo.getAllTasks();
         OptionalInt max = tasks.stream()
                 .map(t -> t.getNumber())
                 .map(s -> s.substring(s.length() - 3))
@@ -48,10 +46,31 @@ public class TaskService {
         number += maxInt;
         task.setNumber(number);
 
-        taskRepo.save(task);
+        taskRepo.createTask(task);
     }
 
     public void deleteTask(String task_id) {
-        taskRepo.delete(Integer.valueOf(task_id));
+        taskRepo.deleteTask(Integer.valueOf(task_id));
+    }
+
+    public void editTask(String id, String title, String priority, String state, String estimate) throws ParseException {
+        Task task = new Task();
+
+        task.setId(Integer.valueOf(id));
+        task.setTitle(title);
+        task.setTaskPriority(TaskPriority.valueOf(priority));
+
+        TaskState taskState = TaskState.valueOf(state);
+        task.setTaskState(taskState);
+
+        if (taskState == TaskState.CLOSED) {
+            task.setEndDate(new Date());
+        } else {
+            task.setEndDate(null);
+        }
+        task.setEstimate(Integer.valueOf(estimate));
+
+        taskRepo.updateTask(task);
+
     }
 }
