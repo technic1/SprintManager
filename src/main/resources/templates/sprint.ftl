@@ -2,11 +2,42 @@
 
 <@c.page>
 
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Author</th>
+            <th scope="col">State</th>
+            <th scope="col">Start date</th>
+            <th scope="col">Expected end date</th>
+            <th scope="col">Actual end date</th>
+            <th scope="col">Tasks</th>
+            <th scope="col">Estimate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>${sprint.title}</td>
+            <td>${sprint.authorName}</td>
+            <td>${sprint.sprintState}</td>
+            <td>${sprint.startDate}</td>
+            <td>${sprint.endDateExpect}</td>
+            <td>
+                <#if sprint.endDateFact??>
+                    ${sprint.endDateFact}
+                </#if>
+            </td>
+            <td>
+                ${sprint.countTasks}
+            </td>
+            <td>${sprint.estimate}</td>
+        </tr>
+    </tbody>
+</table>
 <a class="btn " data-toggle="collapse" href="#multiCollapseExample" role="button" aria-expanded="false" aria-controls="multiCollapseExample">
     Add task from backlog
 </a>
 <div class="collapse multi-collapse" id="multiCollapseExample">
-
     <table class="table table-striped">
         <thead>
             <tr>

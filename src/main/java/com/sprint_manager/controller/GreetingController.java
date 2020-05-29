@@ -40,8 +40,8 @@ public class GreetingController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String main(Map<String, Object> model) {
-        List<Task> tasks = taskRepo.getAllTasks();
-        List<Sprint> sprints = sprintRepo.getAllSprints();
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
 
         model.put("sprints", sprints);
         model.put("tasks", tasks);
@@ -59,8 +59,8 @@ public class GreetingController {
         taskService.addTask(title, priority, estimate);
 
 
-        List<Task> tasks = taskRepo.getAllTasks();
-        List<Sprint> sprints = sprintRepo.getAllSprints();
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
 
         model.put("sprints", sprints);
         model.put("tasks", tasks);
@@ -75,8 +75,8 @@ public class GreetingController {
     ) {
         taskService.deleteTask(id);
 
-        List<Task> tasks = taskRepo.getAllTasks();
-        List<Sprint> sprints = sprintRepo.getAllSprints();
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
 
         model.put("sprints", sprints);
         model.put("tasks", tasks);
@@ -95,8 +95,8 @@ public class GreetingController {
     ) throws ParseException {
         taskService.editTask(id, title, priority, state, estimate);
 
-        List<Task> tasks = taskRepo.getAllTasks();
-        List<Sprint> sprints = sprintRepo.getAllSprints();
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
 
         model.put("sprints", sprints);
         model.put("tasks", tasks);

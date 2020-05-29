@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +34,10 @@ public class SprintController {
 
         Integer integer = Integer.valueOf(sprintId);
         List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(integer);
+        Sprint sprint = sprintService.getSprintById(integer);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
 
+        model.put("sprint", sprint);
         model.put("sprintTasks", sprintTasks);
         model.put("backlogTasks", backlogTasks);
 
@@ -52,8 +55,10 @@ public class SprintController {
 
         Integer integer = Integer.valueOf(sprintId);
         List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(integer);
+        Sprint sprint = sprintService.getSprintById(integer);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
 
+        model.put("sprint", sprint);
         model.put("sprintTasks", sprintTasks);
         model.put("backlogTasks", backlogTasks);
 
@@ -74,8 +79,10 @@ public class SprintController {
 
         Integer integer = Integer.valueOf(sprintId);
         List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(integer);
+        Sprint sprint = sprintService.getSprintById(integer);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
 
+        model.put("sprint", sprint);
         model.put("sprintTasks", sprintTasks);
         model.put("backlogTasks", backlogTasks);
 
@@ -87,17 +94,42 @@ public class SprintController {
             @PathVariable String sprintId,
             @RequestParam String taskId,
             Map<String, Object> model
-    ) throws ParseException {
+    ) {
 
         sprintService.addTaskToSprint(sprintId, taskId);
 
         Integer integer = Integer.valueOf(sprintId);
+
         List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(integer);
+        Sprint sprint = sprintService.getSprintById(integer);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
 
+        model.put("sprint", sprint);
         model.put("sprintTasks", sprintTasks);
         model.put("backlogTasks", backlogTasks);
 
         return "sprint";
+    }
+
+    @RequestMapping(value = "/newsprint", method = RequestMethod.GET)
+    public String newSprint(
+            Map<String, Object> model
+    ) {
+
+        return "new_sprint";
+    }
+
+    @RequestMapping(value = "/newsprint", method = RequestMethod.POST)
+    public String addSprint(
+            @RequestParam String title,
+            @RequestParam String startDate,
+            @RequestParam String endDateExpect,
+            Map<String, Object> model
+    ) throws ParseException {
+
+        Sprint sprint = sprintService.insertNewTask(title, startDate, endDateExpect);
+        String url = "sprint/" + sprint.getId();
+
+        return "redirect:" + url;
     }
 }

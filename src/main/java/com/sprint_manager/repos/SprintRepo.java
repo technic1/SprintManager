@@ -29,4 +29,30 @@ public class SprintRepo {
                 Integer.class
         );
     }
+
+    public Integer insertNewTask(Sprint sprint) {
+        return jdbcTemplate.queryForObject(
+                "insert into sprints (title, author_id, state, date_start, date_end_expect) " +
+                        "values(?, ?, ?, ?, ?) returning id",
+                new Object[] {
+                        sprint.getTitle(),
+                        sprint.getAuthorId(),
+                        sprint.getSprintState(),
+                        sprint.getStartDate(),
+                        sprint.getEndDateExpect()
+                },
+                Integer.class
+        );
+    }
+
+    public Sprint getSprintById(Integer id) {
+        return jdbcTemplate.queryForObject(
+                "select s.id, u.full_name, s.title, s.state, " +
+                        "s.date_start, s.date_end_expect, s.date_end_fact " +
+                        "from sprints as s inner join users as u on s.author_id = u.id " +
+                        "where s.id = ?",
+                new Object[] {id},
+                new SprintMapper()
+        );
+    }
 }

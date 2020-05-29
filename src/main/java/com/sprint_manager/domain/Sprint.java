@@ -13,6 +13,7 @@ public class Sprint {
     private Date endDateExpect;
     private Date endDateFact;
     private Integer countTasks;
+    private Integer estimate;
 
     public Sprint() {
 
@@ -26,6 +27,14 @@ public class Sprint {
         this.startDate = startDate;
         this.endDateExpect = endDateExpect;
         this.endDateFact = endDateFact;
+    }
+
+    public Integer getEstimate() {
+        return estimate;
+    }
+
+    public void setEstimate(Integer estimate) {
+        this.estimate = estimate;
     }
 
     public Integer getCountTasks() {
@@ -68,8 +77,8 @@ public class Sprint {
         this.authorName = authorName;
     }
 
-    public SprintState getSprintState() {
-        return sprintState;
+    public String getSprintState() {
+        return sprintState.name();
     }
 
     public void setSprintState(SprintState sprintState) {

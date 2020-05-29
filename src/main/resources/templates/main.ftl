@@ -7,20 +7,33 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
+                <th scope="col">State</th>
+                <th scope="col">Start date</th>
+                <th scope="col">Expected end date</th>
+                <th scope="col">Actual end date</th>
                 <th scope="col">Tasks</th>
+                <th scope="col">Estimate</th>
             </tr>
         </thead>
         <tbody>
         <#list sprints as sprint>
-                <tr>
+                <tr onclick="window.location.href='/sprint/${sprint.id}'; return false">
                     <td>
-                        <a href="/sprint/${sprint.id}">
                             ${sprint.title}
-                        </a>
+                    </td>
+                    <td>${sprint.authorName}</td>
+                    <td>${sprint.sprintState}</td>
+                    <td>${sprint.startDate}</td>
+                    <td>${sprint.endDateExpect}</td>
+                    <td>
+                        <#if sprint.endDateFact??>
+                            ${sprint.endDateFact}
+                        </#if>
                     </td>
                     <td>
-
+                        ${sprint.countTasks}
                     </td>
+                    <td>${sprint.estimate}</td>
                 </tr>
         </#list>
     </table>
@@ -74,7 +87,7 @@
                     <td>
                         <#if task.endDate??>
                         ${task.endDate}
-                    </#if>
+                        </#if>
                     </td>
                     <td>
                         <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample${task.id}" role="button" aria-expanded="false" aria-controls="multiCollapseExample${task.id}">
@@ -83,7 +96,7 @@
                     </td>
                 </tr>
         <tr class="collapse multi-collapse" id="multiCollapseExample${task.id}">
-            <td colspan="7">
+            <td colspan="6">
                 <div class="">
                     <form method="post" action="?edit">
 
@@ -113,7 +126,7 @@
                     </form>
                 </div>
             </td>
-            <td>
+            <td colspan="2">
                 <form name="form2" method="post" action="?delete">
                     <input hidden name="id" type="text" value="${task.id}">
                     <button class="btn btn-primary" type="submit">Delete</button>
