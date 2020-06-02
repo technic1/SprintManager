@@ -3,6 +3,7 @@ package com.sprint_manager.service;
 import com.sprint_manager.domain.Task;
 import com.sprint_manager.domain.TaskPriority;
 import com.sprint_manager.domain.TaskState;
+import com.sprint_manager.domain.User;
 import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class TaskService {
     @Autowired
     private TaskRepo taskRepo;
 
-    public void addTask (String title, String priority, String rate) throws ParseException {
+    public void addTask (User user, String title, String priority, String rate) throws ParseException {
         Task task = new Task();
 
         task.setTitle(title);
@@ -27,8 +28,8 @@ public class TaskService {
         task.setTaskPriority(TaskPriority.valueOf(priority));
         task.setEstimate(Integer.valueOf(rate));
 
-        //1 for admin
-        task.setAuthorId(1);
+        //3 for admin
+        task.setAuthorId(user.getId());
         task.setTaskState(TaskState.OPEN);
 
         String number = "PRJ-";

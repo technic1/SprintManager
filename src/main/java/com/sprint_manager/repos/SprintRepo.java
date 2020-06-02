@@ -2,10 +2,12 @@ package com.sprint_manager.repos;
 
 import com.sprint_manager.domain.Sprint;
 import com.sprint_manager.domain.SprintMapper;
+import com.sprint_manager.domain.SprintState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -52,6 +54,26 @@ public class SprintRepo {
                         "from sprints as s inner join users as u on s.author_id = u.id " +
                         "where s.id = ?",
                 new Object[] {id},
+                new SprintMapper()
+        );
+    }
+
+    public void updateSprintStateAndActEndDate(Integer id, String state, Date dateEndFact) {
+        jdbcTemplate.update(
+                "update sprints set state = ?, date_end_fact = ? where id = ?",
+                state,
+                dateEndFact,
+                id
+        );
+    }
+
+    public List<Sprint> getActiveSprints() {
+        return jdbcTemplate.query(
+                "select s.id, u.full_name, s.title, s.state, " +
+                        "s.date_start, s.date_end_expect, s.date_end_fact " +
+                        "from sprints as s inner join users as u on s.author_id = u.id " +
+                        "where s.state = ?",
+                new Object[] { SprintState.STARTED.toString() },
                 new SprintMapper()
         );
     }

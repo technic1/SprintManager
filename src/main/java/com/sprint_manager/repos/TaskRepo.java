@@ -14,7 +14,6 @@ import java.util.List;
 public class TaskRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-//    "select t.id, u.full_name, t.date_start, t.date_end, t.state, t.title, t.number, t.estimate, t.priority  from tasks as t inner join users as u on t.author_id = u.id left join sprint_backlog as sb on t.id = sb.task_id where sb.sprint_id = ?"
 
     public int createTask(Task task) throws ParseException {
         return jdbcTemplate.update(

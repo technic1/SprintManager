@@ -20,6 +20,7 @@
             <input class="form-control" type="date" name="endDateExpect" id="example-date-input">
         </div>
     </div>
+    <input type="hidden" name="_csrf" value="${_csrf.token}">
     <button type="submit" class="btn btn-primary">Add</button>
 </form>
 </@c.page>
