@@ -27,7 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers( "/registration").permitAll()
                     .antMatchers("/newsprint")
                         .hasAuthority(UserRole.MANAGER.toString())
-                    .antMatchers("/sprint/{sprintId:\\d+}/delete", "/sprint/{sprintId:\\d+}/add")
+                    .antMatchers("/sprint/{sprintId:\\d+}/delete",
+                            "/sprint/{sprintId:\\d+}/add",
+                            "/delete-from-sprint")
                             .hasAnyAuthority(UserRole.MANAGER.toString(), UserRole.ANALYST.toString())
                     .antMatchers(HttpMethod.POST,
                             "/sprint/{\\d+}/start",

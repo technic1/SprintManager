@@ -1,6 +1,7 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
+<br>
 <form method="post">
     <div class="form-group row">
         <label for="formGroupExampleInput" class="col-2 col-form-label">Title</label>

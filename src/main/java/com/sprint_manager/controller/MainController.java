@@ -180,6 +180,33 @@ public class MainController {
         return "main";
     }
 
+    @RequestMapping(value = "/delete-from-sprint", method = RequestMethod.POST)
+    public String deleteTaskFromSprint(
+            @RequestParam String taskId,
+            @AuthenticationPrincipal User user,
+            Model model
+    ){
+        Integer taskIdInt = Integer.valueOf(taskId);
+        taskRepo.deleteTaskFromSprint(taskIdInt);
+
+        if (sprintService.getActiveSprint() != null) {
+            Sprint sprint = sprintService.getActiveSprint();
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+
+            model.addAttribute("sprintTasks", sprintTasks);
+            model.addAttribute("sprint", sprint);
+        }
+
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
+
+        model.addAttribute("user", user);
+        model.addAttribute("sprints", sprints);
+        model.addAttribute("tasks", tasks);
+
+        return "main";
+    }
+
     @RequestMapping(value = "/open", method = RequestMethod.POST)
     public String openTask(
             @RequestParam String id,

@@ -79,9 +79,9 @@
                 </div>
             </td>
             <td colspan="2">
-                <form name="form2" method="post">
+                <form name="form2" method="post" action="delete-from-sprint">
                     <input hidden name="taskId" type="text" value="${task.id}">
-                    <button action="delete" class="btn btn-primary" type="submit">Delete from sprint</input>
+                    <button  class="btn btn-primary" type="submit">Delete from sprint</input>
                 </form>
             </td>
         </tr>
