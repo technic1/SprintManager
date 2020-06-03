@@ -89,10 +89,17 @@ public class MainController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteTask(
             @RequestParam String id,
+            @RequestParam String authorName,
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        taskService.deleteTask(id);
+        if (user.getRole() == UserRole.DEVELOPER) {
+            if (user.getUsername().equals(authorName)) {
+                taskService.deleteTask(id);
+            } else {
+                model.addAttribute("errorAccessDenied", "Access denied!");
+            }
+        }
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
@@ -126,9 +133,10 @@ public class MainController {
             if (user.getUsername().equals(authorName)) {
                 taskService.editTask(id, title, priority, state, estimate);
             } else {
-                model.addAttribute("errorAccessDenied", "You haven't access");
+                model.addAttribute("errorAccessDenied", "Access denied!");
             }
         }
+
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
             List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
@@ -172,6 +180,31 @@ public class MainController {
         return "main";
     }
 
+    @RequestMapping(value = "/open", method = RequestMethod.POST)
+    public String openTask(
+            @RequestParam String id,
+            @AuthenticationPrincipal User user,
+            Model model
+    ) {
+        taskService.setTaskOpen(id);
+
+        if (sprintService.getActiveSprint() != null) {
+            Sprint sprint = sprintService.getActiveSprint();
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+
+            model.addAttribute("sprintTasks", sprintTasks);
+            model.addAttribute("sprint", sprint);
+        }
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
+
+        model.addAttribute("user", user);
+        model.addAttribute("sprints", sprints);
+        model.addAttribute("tasks", tasks);
+
+        return "main";
+    }
+
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration() {
 
@@ -190,7 +223,6 @@ public class MainController {
                     "Username already exists, choose another");
             return "registration";
         }
-
 
         return "redirect:/login";
     }

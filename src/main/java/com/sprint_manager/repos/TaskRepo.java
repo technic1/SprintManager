@@ -97,10 +97,11 @@ public class TaskRepo {
         ) > 0;
     }
 
-    public boolean updateTaskState(String state, Task task) {
+    public boolean updateTaskStateAndEndDate(String state, Task task) {
         return jdbcTemplate.update(
-                "update tasks set state = ? where id = ?",
+                "update tasks set state = ?, date_end = ? where id = ?",
                 state,
+                task.getEndDate(),
                 task.getId()
         ) > 0;
     }

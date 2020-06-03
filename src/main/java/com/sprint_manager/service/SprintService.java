@@ -49,17 +49,6 @@ public class SprintService {
     public List<Sprint> getAllSprints() {
         List<Sprint> sprints = sprintRepo.getAllSprints();
 
-//        for (Sprint sprint : sprints) {
-//            List<Task> tasks = taskRepo.getAllTasksBySprintId(sprint.getId());
-//            sprint.setCountTasks(tasks.size());
-//
-//            int estimate = tasks.stream()
-//                    .map(t -> t.getEstimate())
-//                    .mapToInt(Integer::intValue)
-//                    .sum();
-//
-//            sprint.setEstimate(estimate);
-//        }
         return sprints;
     }
 
@@ -98,12 +87,10 @@ public class SprintService {
     }
 
     public boolean haveOpenTasksBySprintId(Integer id) {
-
         return taskRepo.getAllTasksBySprintId(id).stream()
                 .map(t -> t.getTaskState())
                 .anyMatch(state -> state.equals(TaskState.OPEN.name()));
     }
-
 
     public Sprint getActiveSprint() {
         List<Sprint> activeSprints = sprintRepo.getActiveSprints();
@@ -122,6 +109,19 @@ public class SprintService {
         } else {
             return false;
         }
+    }
 
+    public boolean editSprint(String sprintId, String title, String startDate, String endDateExpect) throws ParseException {
+
+        Sprint sprint = new Sprint();
+        sprint.setId(Integer.valueOf(sprintId));
+        sprint.setTitle(title);
+        Date start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+        Date end = new SimpleDateFormat("yyyy-MM-dd").parse(endDateExpect);
+
+        sprint.setStartDate(start);
+        sprint.setEndDateExpect(end);
+
+        return sprintRepo.updateSprint(sprint);
     }
 }

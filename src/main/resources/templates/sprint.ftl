@@ -27,6 +27,7 @@
             <th scope="col">Actual end date</th>
             <th scope="col">Tasks</th>
             <th scope="col">Estimate</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +46,37 @@
                 ${sprint.countTasks}
             </td>
             <td>${sprint.estimate}</td>
+            <td>
+                <a class="btn btn-primary" data-toggle="collapse" href="#sprint${sprint.id}" role="button" aria-expanded="false" aria-controls="sprint${sprint.id}">
+                    Edit
+                </a>
+            </td>
+        </tr>
+        <tr class="collapse multi-collapse" id="sprint${sprint.id}">
+            <td colspan="9">
+                <form name="form2" method="post" action="/edit-sprint">
+                    <div class="form-group row">
+                        <label for="formGroupExampleInput" class="col-2 col-form-label">Title</label>
+                        <div class="col-4">
+                            <input type="text" class="form-control" id="formGroupExampleInput" name="title" placeholder="Enter title">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-datetime-local-input" class="col-2 col-form-label">Start date</label>
+                        <div class="col-4">
+                            <input class="form-control" type="date" name="startDate" id="example-datetime-local-input">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-date-input" class="col-2 col-form-label">Expected end date</label>
+                        <div class="col-4">
+                            <input class="form-control" type="date" name="endDateExpect" id="example-date-input">
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <button type="submit" class="btn btn-primary">Edit sprint</button>
+                </form>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -103,7 +135,7 @@
         <th scope="col">State</th>
         <th scope="col">Estimate</th>
         <th scope="col">Created</th>
-        <th scope="col">End</th>
+        <th scope="col">Closed</th>
         <th></th>
     </tr>
     </thead>
@@ -123,17 +155,17 @@
             </#if>
             </td>
             <td>
-                <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample${task.id}" role="button" aria-expanded="false" aria-controls="multiCollapseExample${task.id}">
+                <a class="btn btn-primary" data-toggle="collapse" href="#task${task.id}" role="button" aria-expanded="false" aria-controls="task${task.id}">
                     Edit
                 </a>
             </td>
         </tr>
-        <tr class="collapse multi-collapse" id="multiCollapseExample${task.id}">
+        <tr class="collapse multi-collapse" id="task${task.id}">
             <td colspan="7">
                 <div class="">
                     <form method="post" action="/sprint/${sprint.id}/edit">
-
                         <input hidden name="id" type="text" value="${task.id}">
+                        <input hidden name="authorName" type="text" value="${task.authorName}">
                         <div class="form-group col-sm-6">
                             <input class="form-control" id="exampleFormControlInput1" type="text" name="title" placeholder="Enter task title">
                         </div>

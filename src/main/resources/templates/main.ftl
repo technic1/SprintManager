@@ -134,7 +134,7 @@
                 <th scope="col">State</th>
                 <th scope="col">Estimate</th>
                 <th scope="col">Created</th>
-                <th scope="col">End</th>
+                <th scope="col">Closed</th>
                 <th></th>
             </tr>
         </thead>
@@ -146,14 +146,24 @@
                     <td>${task.authorName}</td>
                     <td>${task.taskPriority}</td>
                     <td>
-                        ${task.taskState}
-                        <#if task.taskState == "OPEN">
-                            <form name="form2" method="post" action="/close">
-                                <input hidden name="id" type="text" value="${task.id}">
-                                <input type="hidden" name="_csrf" value="${_csrf.token}">
-                                <button class="btn btn-primary" type="submit">Close</button>
-                            </form>
-                        </#if>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ${task.taskState}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <#if task.taskState == "OPEN">
+                                <form name="form2" method="post" action="/close">
+                                    <input hidden name="id" type="text" value="${task.id}">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                    <button class="btn btn-primary" type="submit">Close</button>
+                                </form>
+                            <#else>
+                                <form name="form2" method="post" action="/open">
+                                    <input hidden name="id" type="text" value="${task.id}">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                    <button class="btn btn-primary" type="submit">Open</button>
+                                </form>
+                            </#if>
+                        </div>
                     </td>
                     <td>${task.estimate}</td>
                     <td>${task.startDate}</td>
@@ -172,7 +182,6 @@
             <td colspan="6">
                 <div class="">
                     <form method="post" action="/edit">
-
                         <input hidden name="id" type="text" value="${task.id}">
                         <input hidden name="authorName" type="text" value="${task.authorName}">
                         <div class="form-group col-sm-6">
@@ -204,6 +213,7 @@
             <td colspan="2">
                 <form name="form2" method="post" action="/delete">
                     <input hidden name="id" type="text" value="${task.id}">
+                    <input hidden name="authorName" type="text" value="${task.authorName}">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <button class="btn btn-primary" type="submit">Delete</button>
                 </form>

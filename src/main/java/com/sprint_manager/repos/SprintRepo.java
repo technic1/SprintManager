@@ -77,4 +77,14 @@ public class SprintRepo {
                 new SprintMapper()
         );
     }
+
+    public boolean updateSprint(Sprint sprint) {
+        return jdbcTemplate.update(
+                "update sprints set title = ?, date_start = ?, date_end_expect = ? where sprint.id = ?",
+                sprint.getTitle(),
+                sprint.getStartDate(),
+                sprint.getEndDateExpect(),
+                sprint.getId()
+        ) > 0;
+    }
 }

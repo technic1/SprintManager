@@ -26,13 +26,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers( "/registration").permitAll()
                     .antMatchers("/newsprint")
-                        .hasAuthority("MANAGER")
+                        .hasAuthority(UserRole.MANAGER.toString())
                     .antMatchers("/sprint/{sprintId:\\d+}/delete", "/sprint/{sprintId:\\d+}/add")
-                            .hasAnyAuthority("MANAGER", "ANALYST")
+                            .hasAnyAuthority(UserRole.MANAGER.toString(), UserRole.ANALYST.toString())
                     .antMatchers(HttpMethod.POST,
-                            "/sprint/{sprintId:\\d+}/start",
-                            "/sprint/{sprintId:\\d+}/finish")
-                        .hasAuthority("MANAGER")
+                            "/sprint/{\\d+}/start",
+                            "/sprint/{sprintId:\\d+}/finish",
+                            "/sprint/{sprintId:\\d+}/edit-sprint")
+                        .hasAuthority(UserRole.MANAGER.toString())
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling().accessDeniedHandler(accessDeniedHandler())

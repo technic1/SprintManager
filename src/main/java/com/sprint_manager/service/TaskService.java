@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.OptionalInt;
@@ -78,14 +77,16 @@ public class TaskService {
     public boolean setTaskClosed(String taskId) {
         Task task = new Task();
         task.setId(Integer.valueOf(taskId));
+        task.setEndDate(new Date());
 
-        return taskRepo.updateTaskState(TaskState.CLOSED.toString(), task);
+        return taskRepo.updateTaskStateAndEndDate(TaskState.CLOSED.toString(), task);
     }
 
     public boolean setTaskOpen(String taskId) {
         Task task = new Task();
         task.setId(Integer.valueOf(taskId));
+        task.setEndDate(null);
 
-        return taskRepo.updateTaskState(TaskState.OPEN.toString(), task);
+        return taskRepo.updateTaskStateAndEndDate(TaskState.OPEN.toString(), task);
     }
 }
