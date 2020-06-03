@@ -3,6 +3,7 @@ package com.sprint_manager.repos;
 import com.sprint_manager.domain.User;
 import com.sprint_manager.domain.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,13 +14,17 @@ public class UserRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<User> findByUserName(String username) {
-        return jdbcTemplate.query(
-                "select * from users where full_name = ?",
-                new Object[] { username },
-                new UserMapper()
-        );
-
+    public User findByUserName(String username) {
+        try {
+            User user = jdbcTemplate.queryForObject(
+                    "select * from users where full_name = ?",
+                    new Object[]{username},
+                    new UserMapper()
+            );
+            return user;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
     }
 
     public void saveUser(User user) {

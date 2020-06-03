@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Repository
@@ -83,18 +82,26 @@ public class TaskRepo {
     }
 
     //adding sprint_id to task
-    public void updateTaskSprintId(Task task) {
-        jdbcTemplate.update(
+    public boolean updateTaskSprintId(Task task) {
+        return jdbcTemplate.update(
                 "update tasks set sprint_id = ? where id = ?",
                 task.getSprintId(),
                 task.getId()
-        );
+        ) > 0;
     }
 
     public boolean deleteTaskFromSprint(Integer id) {
         return jdbcTemplate.update(
                 "update tasks set sprint_id = null where id = ?",
                 id
+        ) > 0;
+    }
+
+    public boolean updateTaskState(String state, Task task) {
+        return jdbcTemplate.update(
+                "update tasks set state = ? where id = ?",
+                state,
+                task.getId()
         ) > 0;
     }
 

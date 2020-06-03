@@ -3,6 +3,7 @@ package com.sprint_manager.controller;
 import com.sprint_manager.domain.Sprint;
 import com.sprint_manager.domain.Task;
 import com.sprint_manager.domain.User;
+import com.sprint_manager.domain.UserRole;
 import com.sprint_manager.repos.SprintRepo;
 import com.sprint_manager.repos.TaskRepo;
 import com.sprint_manager.service.SprintService;
@@ -113,6 +114,7 @@ public class MainController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String editTask(
             @RequestParam String id,
+            @RequestParam String authorName,
             @RequestParam String title,
             @RequestParam String priority,
             @RequestParam String state,
@@ -120,7 +122,38 @@ public class MainController {
             @AuthenticationPrincipal User user,
             Model model
     ) throws ParseException {
-        taskService.editTask(id, title, priority, state, estimate);
+        if (user.getRole() == UserRole.DEVELOPER) {
+            if (user.getUsername().equals(authorName)) {
+                taskService.editTask(id, title, priority, state, estimate);
+            } else {
+                model.addAttribute("errorAccessDenied", "You haven't access");
+            }
+        }
+        if (sprintService.getActiveSprint() != null) {
+            Sprint sprint = sprintService.getActiveSprint();
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+
+            model.addAttribute("sprintTasks", sprintTasks);
+            model.addAttribute("sprint", sprint);
+        }
+
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = sprintService.getAllSprints();
+
+        model.addAttribute("user", user);
+        model.addAttribute("sprints", sprints);
+        model.addAttribute("tasks", tasks);
+
+        return "main";
+    }
+
+    @RequestMapping(value = "/close", method = RequestMethod.POST)
+    public String closeTask(
+            @RequestParam String id,
+            @AuthenticationPrincipal User user,
+            Model model
+    ) {
+        taskService.setTaskClosed(id);
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
@@ -149,10 +182,12 @@ public class MainController {
     public String addUser (
             @RequestParam String username,
             @RequestParam String role,
-            @RequestParam String password
+            @RequestParam String password,
+            Model model
     ) {
-        System.out.println("registration-------------");
         if (!userService.addUser(username, role, password)) {
+            model.addAttribute("errorUsernameAlreadyExists",
+                    "Username already exists, choose another");
             return "registration";
         }
 

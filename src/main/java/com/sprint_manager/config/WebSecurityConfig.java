@@ -1,15 +1,18 @@
 package com.sprint_manager.config;
 
+import com.sprint_manager.domain.UserRole;
 import com.sprint_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -21,8 +24,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers( "/registration").permitAll()
-                .anyRequest().authenticated()
+                    .antMatchers( "/registration").permitAll()
+                    .antMatchers("/newsprint")
+                        .hasAuthority("MANAGER")
+                    .antMatchers("/sprint/{sprintId:\\d+}/delete", "/sprint/{sprintId:\\d+}/add")
+                            .hasAnyAuthority("MANAGER", "ANALYST")
+                    .antMatchers(HttpMethod.POST,
+                            "/sprint/{sprintId:\\d+}/start",
+                            "/sprint/{sprintId:\\d+}/finish")
+                        .hasAuthority("MANAGER")
+                    .anyRequest().authenticated()
+                .and()
+                    .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
                 .and()
                     .formLogin()
                     .loginPage("/login")
@@ -41,6 +54,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 
 }

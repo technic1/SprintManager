@@ -24,20 +24,19 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<User> usersFromDb = userRepo.findByUserName(username);
+        User usersFromDb = userRepo.findByUserName(username);
 
-        if (usersFromDb.isEmpty()) {
+        if (usersFromDb == null) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        return usersFromDb.get(0);
+        return usersFromDb;
     }
 
     public boolean addUser(String username, String role, String password) {
-        List<User> usersFromDb = userRepo.findByUserName(username);
+        User usersFromDb = userRepo.findByUserName(username);
 
-        System.out.println(usersFromDb);
-        if (!usersFromDb.isEmpty()) {
+        if (usersFromDb != null) {
             return false;
         }
         User user = new User();

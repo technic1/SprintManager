@@ -74,4 +74,18 @@ public class TaskService {
         taskRepo.updateTask(task);
 
     }
+
+    public boolean setTaskClosed(String taskId) {
+        Task task = new Task();
+        task.setId(Integer.valueOf(taskId));
+
+        return taskRepo.updateTaskState(TaskState.CLOSED.toString(), task);
+    }
+
+    public boolean setTaskOpen(String taskId) {
+        Task task = new Task();
+        task.setId(Integer.valueOf(taskId));
+
+        return taskRepo.updateTaskState(TaskState.OPEN.toString(), task);
+    }
 }

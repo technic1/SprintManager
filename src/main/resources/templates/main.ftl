@@ -1,6 +1,12 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
+<#if errorAccessDenied??>
+    <div class="alert alert-warning" role="alert">
+        ${errorAccessDenied}
+    </div>
+</#if>
+<br>
 <#if sprint??>
     <a data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
         <h4>Active sprint: ${sprint.title}</h4>
@@ -139,7 +145,16 @@
                     <td>${task.title}</td>
                     <td>${task.authorName}</td>
                     <td>${task.taskPriority}</td>
-                    <td>${task.taskState}</td>
+                    <td>
+                        ${task.taskState}
+                        <#if task.taskState == "OPEN">
+                            <form name="form2" method="post" action="/close">
+                                <input hidden name="id" type="text" value="${task.id}">
+                                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                <button class="btn btn-primary" type="submit">Close</button>
+                            </form>
+                        </#if>
+                    </td>
                     <td>${task.estimate}</td>
                     <td>${task.startDate}</td>
                     <td>
@@ -159,6 +174,7 @@
                     <form method="post" action="/edit">
 
                         <input hidden name="id" type="text" value="${task.id}">
+                        <input hidden name="authorName" type="text" value="${task.authorName}">
                         <div class="form-group col-sm-6">
                             <input class="form-control" id="exampleFormControlInput1" type="text" name="title" placeholder="Enter task title">
                         </div>

@@ -25,7 +25,7 @@ public class SprintService {
         task.setId(Integer.valueOf(taskId));
         task.setSprintId(Integer.valueOf(sprintId));
 
-        taskRepo.updateTaskSprintId(task);
+        boolean b = taskRepo.updateTaskSprintId(task);
     }
 
     public Sprint insertNewSprint(User user, String title, String start, String end) throws ParseException {

@@ -1,7 +1,11 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-
+<#if errorUsernameAlreadyExists??>
+    <div class="alert alert-warning" role="alert">
+        ${errorUsernameAlreadyExists}
+    </div>
+</#if>
 <form action="/registration" method="post">
     <div class="form-group row">
         <label class="col-sm-2 col-form-label"> User Name: </label>
