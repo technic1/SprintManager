@@ -4,11 +4,11 @@ import com.sprint_manager.domain.Sprint;
 import com.sprint_manager.domain.SprintMapper;
 import com.sprint_manager.domain.SprintState;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class SprintRepo {
@@ -67,15 +67,19 @@ public class SprintRepo {
         );
     }
 
-    public List<Sprint> getActiveSprints() {
-        return jdbcTemplate.query(
-                "select s.id, u.full_name, s.title, s.state, " +
-                        "s.date_start, s.date_end_expect, s.date_end_fact " +
-                        "from sprints as s inner join users as u on s.author_id = u.id " +
-                        "where s.state = ?",
-                new Object[] { SprintState.STARTED.toString() },
-                new SprintMapper()
-        );
+    public Sprint getActiveSprint() {
+        try {
+            return jdbcTemplate.queryForObject(
+                    "select s.id, u.full_name, s.title, s.state, " +
+                            "s.date_start, s.date_end_expect, s.date_end_fact " +
+                            "from sprints as s inner join users as u on s.author_id = u.id " +
+                            "where s.state = ?",
+                    new Object[] { SprintState.STARTED.toString() },
+                    new SprintMapper()
+            );
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
     }
 
     public boolean updateSprint(Sprint sprint) {
@@ -86,5 +90,17 @@ public class SprintRepo {
                 sprint.getEndDateExpect(),
                 sprint.getId()
         ) > 0;
+    }
+
+    public Map<String, Integer> getCountTasksAndSumEstimate(Integer id) {
+
+        Map<String, Object> stringObjectMap = jdbcTemplate.queryForMap(
+                "select sum(estimate), count(estimate) from tasks where sprint_id = ?",
+                new Object[] { id }
+        );
+        Map<String, Integer> map = new HashMap<>();
+        map.put("sum", ((Long) stringObjectMap.get("sum")).intValue());
+        map.put("count", ((Long) stringObjectMap.get("count")).intValue());
+        return map;
     }
 }

@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SprintService {
@@ -25,7 +26,7 @@ public class SprintService {
         task.setId(Integer.valueOf(taskId));
         task.setSprintId(Integer.valueOf(sprintId));
 
-        boolean b = taskRepo.updateTaskSprintId(task);
+        taskRepo.updateTaskSprintId(task);
     }
 
     public Sprint insertNewSprint(User user, String title, String start, String end) throws ParseException {
@@ -52,18 +53,13 @@ public class SprintService {
         return sprints;
     }
 
+    //fix it with one sql request?
     public Sprint getSprintById(Integer id) {
         Sprint sprint = sprintRepo.getSprintById(id);
+        Map<String, Integer> sumEstimateAndCount = sprintRepo.getCountTasksAndSumEstimate(id);
 
-        List<Task> tasks = taskRepo.getAllTasksBySprintId(sprint.getId());
-        sprint.setCountTasks(tasks.size());
-
-        int estimate = tasks.stream()
-                .map(t -> t.getEstimate())
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        sprint.setEstimate(estimate);
+        sprint.setEstimate(sumEstimateAndCount.get("sum"));
+        sprint.setCountTasks(sumEstimateAndCount.get("count"));
 
         return sprint;
     }
@@ -78,8 +74,8 @@ public class SprintService {
     }
 
     public boolean haveActiveSprint() {
-        List<Sprint> activeSprints = sprintRepo.getActiveSprints();
-        if (activeSprints.size() > 0) {
+        Sprint activeSprint = sprintRepo.getActiveSprint();
+        if (activeSprint != null) {
             return true;
         } else {
             return false;
@@ -87,18 +83,16 @@ public class SprintService {
     }
 
     public boolean haveOpenTasksBySprintId(Integer id) {
-        return taskRepo.getAllTasksBySprintId(id).stream()
-                .map(t -> t.getTaskState())
-                .anyMatch(state -> state.equals(TaskState.OPEN.name()));
+        List<Task> allOpenTasksById = taskRepo.getAllOpenTasksById(id);
+        if (allOpenTasksById.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Sprint getActiveSprint() {
-        List<Sprint> activeSprints = sprintRepo.getActiveSprints();
-        if (activeSprints.size() > 0) {
-            return activeSprints.get(0);
-        } else {
-            return null;
-        }
+        return sprintRepo.getActiveSprint();
     }
 
     public boolean haveTasks(Integer id) {

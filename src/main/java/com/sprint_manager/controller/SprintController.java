@@ -37,6 +37,7 @@ public class SprintController {
             Model model
     ) {
         Integer sprintIdInt = Integer.valueOf(sprintId);
+
         List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
         Sprint sprint = sprintService.getSprintById(sprintIdInt);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();

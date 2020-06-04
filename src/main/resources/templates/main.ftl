@@ -73,14 +73,16 @@
                         <div class="form-group col-sm-6">
                             <input class="form-control" type="text" name="estimate" placeholder="Enter estimate">
                         </div>
+                        <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <button action="/edit" class="btn btn-primary" type="submit">Edit</button>
                 </div>
                 </form>
                 </div>
             </td>
             <td colspan="2">
-                <form name="form2" method="post" action="delete-from-sprint">
+                <form name="form2" method="post" action="/delete-from-sprint">
                     <input hidden name="taskId" type="text" value="${task.id}">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <button  class="btn btn-primary" type="submit">Delete from sprint</input>
                 </form>
             </td>
