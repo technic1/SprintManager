@@ -36,6 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             "/sprint/{sprintId:\\d+}/finish",
                             "/sprint/{sprintId:\\d+}/edit-sprint")
                         .hasAuthority(UserRole.MANAGER.toString())
+                    .antMatchers("/add", "/edit", "/delete", "/close")
+                        .hasAnyAuthority(UserRole.ANALYST.toString(), UserRole.DEVELOPER.toString())
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling().accessDeniedHandler(accessDeniedHandler())

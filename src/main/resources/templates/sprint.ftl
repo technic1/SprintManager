@@ -16,6 +16,11 @@
         ${errorSetFinished}
     </div>
 </#if>
+<#if errorDate??>
+<div class="alert alert-warning" role="alert">
+    ${errorDate}
+</div>
+</#if>
 <table class="table table-hover">
     <thead>
         <tr>

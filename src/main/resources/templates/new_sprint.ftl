@@ -2,7 +2,7 @@
 
 <@c.page>
 <br>
-<form method="post">
+<form method="post" action="/new">
     <div class="form-group row">
         <label for="formGroupExampleInput" class="col-2 col-form-label">Title</label>
         <div class="col-4">

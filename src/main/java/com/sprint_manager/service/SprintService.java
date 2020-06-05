@@ -5,6 +5,7 @@ import com.sprint_manager.repos.SprintRepo;
 import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -123,14 +124,14 @@ public class SprintService {
         try {
             start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("empty start date");
         }
 
         Date end = null;
         try {
             end = new SimpleDateFormat("yyyy-MM-dd").parse(endDateExpect);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("empty end date");
         }
 
         sprint.setStartDate(start);
@@ -138,4 +139,33 @@ public class SprintService {
 
         return sprintRepo.updateSprint(sprint);
     }
+
+    public void getBacklogModel(Model model, User user) {
+        List<Task> tasks = taskRepo.getAllTasksFromBacklog();
+        List<Sprint> sprints = getAllSprints();
+
+        model.addAttribute("user", user);
+        model.addAttribute("sprints", sprints);
+        model.addAttribute("backlogTasks", tasks);
+    }
+
+    public void getActiveSprintModel(Model model) {
+        Sprint sprint = getActiveSprint();
+        if (sprint != null) {
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
+
+            model.addAttribute("sprintTasks", sprintTasks);
+            model.addAttribute("sprint", sprint);
+        }
+    }
+
+    public void getSprintModel(Model model, String sprintId) {
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = getSprintById(sprintId);
+
+        model.addAttribute("sprint", sprint);
+        model.addAttribute("sprintTasks", sprintTasks);
+    }
+
+
 }

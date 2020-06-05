@@ -34,24 +34,20 @@
             <td>${task.authorName}</td>
             <td>${task.taskPriority}</td>
             <td>
+                <#if task.taskState == "OPEN">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     ${task.taskState}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <#if task.taskState == "OPEN">
-                    <form name="form2" method="post" action="/close">
+                    <form name="form2" method="post" action="/close ">
                         <input hidden name="id" type="text" value="${task.id}">
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <button class="btn btn-primary" type="submit">Close</button>
                     </form>
-                    <#else>
-                    <form name="form2" method="post" action="/open">
-                        <input hidden name="id" type="text" value="${task.id}">
-                        <input type="hidden" name="_csrf" value="${_csrf.token}">
-                        <button class="btn btn-primary" type="submit">Open</button>
-                    </form>
+                </div>
+                <#else>
+                    ${task.taskState}
                 </#if>
-</div>
 </td>
             <td>${task.estimate}</td>
             <td>${task.startDate}</td>
@@ -160,31 +156,27 @@
             </tr>
         </thead>
         <tbody>
-        <#list tasks as task>
+        <#list backlogTasks as task>
                 <tr>
                     <td>${task.number}</td>
                     <td>${task.title}</td>
                     <td>${task.authorName}</td>
                     <td>${task.taskPriority}</td>
                     <td>
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            ${task.taskState}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <#if task.taskState == "OPEN">
-                                <form name="form2" method="post" action="/close">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ${task.taskState}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <form name="form2" method="post" action="/close ">
                                     <input hidden name="id" type="text" value="${task.id}">
                                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                                     <button class="btn btn-primary" type="submit">Close</button>
                                 </form>
+                            </div>
                             <#else>
-                                <form name="form2" method="post" action="/open">
-                                    <input hidden name="id" type="text" value="${task.id}">
-                                    <input type="hidden" name="_csrf" value="${_csrf.token}">
-                                    <button class="btn btn-primary" type="submit">Open</button>
-                                </form>
-                            </#if>
-                        </div>
+                            ${task.taskState}
+                        </#if>
                     </td>
                     <td>${task.estimate}</td>
                     <td>${task.startDate}</td>

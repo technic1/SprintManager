@@ -35,16 +35,8 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -57,18 +49,8 @@ public class SprintController {
             Model model
     ) {
         taskRepo.deleteTaskFromSprint(taskId);
-
-        Integer sprintIdInt = Integer.valueOf(sprintId);
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -85,24 +67,9 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        if (user.getRole() == UserRole.DEVELOPER) {
-            if (user.getUsername().equals(authorName)) {
-                taskService.editTask(id, title, priority, state, estimate);
-            } else {
-                model.addAttribute("errorAccessDenied", "Access denied!");
-            }
-        }
-
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        taskService.editTaskIfDeveloperHaveAccess(model, user, authorName, id, title, priority, state, estimate);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -115,17 +82,8 @@ public class SprintController {
             Model model
     ) {
         sprintService.addTaskToSprint(sprintId, taskId);
-
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -136,7 +94,6 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        Integer sprintIdInt = Integer.valueOf(sprintId);
 
         boolean haveActiveSprint = sprintService.haveActiveSprint();
         boolean haveTasks = sprintService.haveTasks(sprintId);
@@ -150,17 +107,8 @@ public class SprintController {
             sprintService.startSprint(sprintId);
         }
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
-
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
         return "sprint";
     }
 
@@ -177,16 +125,8 @@ public class SprintController {
                     "Can't be finished, close existing opened tasks or put them in backlog");
         }
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -203,19 +143,10 @@ public class SprintController {
         try {
             sprintService.editSprint(sprintId, title, startDate, endDateExpect);
         } catch (RuntimeException e) {
-            return "/sprint/{sprintId}";
+            model.addAttribute("errorDate", e.getMessage());
         }
-
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
-        Sprint sprint = sprintService.getSprintById(sprintId);
-        List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("user", user);
-        model.addAttribute("sprints", sprints);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("sprintTasks", sprintTasks);
-        model.addAttribute("backlogTasks", backlogTasks);
+        sprintService.getSprintModel(model, sprintId);
+        sprintService.getBacklogModel(model, user);
 
         return "sprint";
     }
@@ -232,7 +163,7 @@ public class SprintController {
         return "new_sprint";
     }
 
-    @RequestMapping(value = "/newsprint", method = RequestMethod.POST)
+    @RequestMapping(value = "/newsprint/new", method = RequestMethod.POST)
     public String addSprint(
             @RequestParam String title,
             @RequestParam String startDate,
@@ -240,17 +171,18 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
+        List<Sprint> sprints = sprintService.getAllSprints();
+        model.addAttribute("sprints", sprints);
+
         Sprint sprint = null;
         try {
             sprint = sprintService.insertNewSprint(user, title, startDate, endDateExpect);
         } catch (RuntimeException e) {
-            return "/newsprint";
+            model.addAttribute("errorDate", e.getMessage());
+            return "newsprint";
         }
 
         String url = "sprint/" + sprint.getId();
-        List<Sprint> sprints = sprintService.getAllSprints();
-
-        model.addAttribute("sprints", sprints);
 
         return "redirect:" + url;
     }
