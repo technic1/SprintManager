@@ -6,7 +6,6 @@ import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,13 +28,25 @@ public class SprintService {
         taskRepo.updateTaskSprintId(task);
     }
 
-    public Sprint insertNewSprint(User user, String title, String start, String end) throws ParseException {
+    public Sprint insertNewSprint(User user, String title, String start, String end) throws RuntimeException {
         Sprint sprint = new Sprint();
 
         sprint.setTitle(title);
         sprint.setAuthorId(user.getId());
-        Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse(start);
-        Date endDateExpect = new SimpleDateFormat("yyyy-MM-dd").parse(end);
+
+        Date startDate = null;
+        try {
+            startDate = new SimpleDateFormat("yyyy-MM-dd").parse(start);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Date endDateExpect = null;
+        try {
+            endDateExpect = new SimpleDateFormat("yyyy-MM-dd").parse(end);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         sprint.setStartDate(startDate);
         sprint.setEndDateExpect(endDateExpect);
@@ -53,8 +64,9 @@ public class SprintService {
         return sprints;
     }
 
-    //fix it with one sql request?
-    public Sprint getSprintById(Integer id) {
+    public Sprint getSprintById(String sprintId) {
+        Integer id = Integer.valueOf(sprintId);
+
         Sprint sprint = sprintRepo.getSprintById(id);
         Map<String, Integer> sumEstimateAndCount = sprintRepo.getCountTasksAndSumEstimate(id);
 
@@ -64,54 +76,62 @@ public class SprintService {
         return sprint;
     }
 
-    public void startSprint(Integer id) {
+    public void startSprint(String sprintId) {
+        Integer id = Integer.valueOf(sprintId);
+
         sprintRepo.updateSprintStateAndActEndDate(id, SprintState.STARTED.name(), null);
     }
 
-    public void finishSprint(Integer id) {
+    public void finishSprint(String sprintId) {
+        Integer id = Integer.valueOf(sprintId);
+
         Date dateEndFact = new Date();
         sprintRepo.updateSprintStateAndActEndDate(id, SprintState.FINISHED.name(), dateEndFact);
     }
 
     public boolean haveActiveSprint() {
         Sprint activeSprint = sprintRepo.getActiveSprint();
-        if (activeSprint != null) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return activeSprint != null;
     }
 
-    public boolean haveOpenTasksBySprintId(Integer id) {
+    public boolean haveOpenTasksBySprintId(String sprintId) {
+        Integer id = Integer.valueOf(sprintId);
+
         List<Task> allOpenTasksById = taskRepo.getAllOpenTasksById(id);
-        if (allOpenTasksById.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return allOpenTasksById.size() > 0;
     }
 
     public Sprint getActiveSprint() {
         return sprintRepo.getActiveSprint();
     }
 
-    public boolean haveTasks(Integer id) {
-        List<Task> allTasksBySprintId = taskRepo.getAllTasksBySprintId(id);
+    public boolean haveTasks(String sprintId) {
 
-        if (allTasksBySprintId.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        List<Task> allTasksBySprintId = taskRepo.getAllTasksBySprintId(sprintId);
+
+        return  allTasksBySprintId.size() > 0;
     }
 
-    public boolean editSprint(String sprintId, String title, String startDate, String endDateExpect) throws ParseException {
-
+    public boolean editSprint(String sprintId, String title, String startDate, String endDateExpect) throws RuntimeException {
         Sprint sprint = new Sprint();
         sprint.setId(Integer.valueOf(sprintId));
         sprint.setTitle(title);
-        Date start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-        Date end = new SimpleDateFormat("yyyy-MM-dd").parse(endDateExpect);
+
+        Date start = null;
+        try {
+            start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Date end = null;
+        try {
+            end = new SimpleDateFormat("yyyy-MM-dd").parse(endDateExpect);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         sprint.setStartDate(start);
         sprint.setEndDateExpect(end);

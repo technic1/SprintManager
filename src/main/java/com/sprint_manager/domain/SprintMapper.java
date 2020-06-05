@@ -1,6 +1,5 @@
 package com.sprint_manager.domain;
 
-
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

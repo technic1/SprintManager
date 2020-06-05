@@ -58,13 +58,13 @@ public class SprintRepo {
         );
     }
 
-    public void updateSprintStateAndActEndDate(Integer id, String state, Date dateEndFact) {
-        jdbcTemplate.update(
+    public boolean updateSprintStateAndActEndDate(Integer id, String state, Date dateEndFact) {
+        return jdbcTemplate.update(
                 "update sprints set state = ?, date_end_fact = ? where id = ?",
                 state,
                 dateEndFact,
                 id
-        );
+        ) == 1;
     }
 
     public Sprint getActiveSprint() {
@@ -89,7 +89,7 @@ public class SprintRepo {
                 sprint.getStartDate(),
                 sprint.getEndDateExpect(),
                 sprint.getId()
-        ) > 0;
+        ) == 1;
     }
 
     public Map<String, Integer> getCountTasksAndSumEstimate(Integer id) {

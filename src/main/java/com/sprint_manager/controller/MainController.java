@@ -1,9 +1,6 @@
 package com.sprint_manager.controller;
 
-import com.sprint_manager.domain.Sprint;
-import com.sprint_manager.domain.Task;
-import com.sprint_manager.domain.User;
-import com.sprint_manager.domain.UserRole;
+import com.sprint_manager.domain.*;
 import com.sprint_manager.repos.SprintRepo;
 import com.sprint_manager.repos.TaskRepo;
 import com.sprint_manager.service.SprintService;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -44,7 +40,7 @@ public class MainController {
 
         Sprint activeSprint = sprintService.getActiveSprint();
         if (activeSprint != null) {
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(activeSprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(activeSprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", activeSprint);
@@ -66,12 +62,18 @@ public class MainController {
             @RequestParam String estimate,
             @AuthenticationPrincipal User user,
             Model model
-    ) throws ParseException {
-        taskService.addTask(user, title, priority, estimate);
+    ) {
+        Task task = new Task();
+
+        task.setTitle(title);
+        task.setTaskPriority(TaskPriority.valueOf(priority));
+        task.setEstimate(Integer.valueOf(estimate));
+
+        taskService.addTask(user, task);
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);
@@ -103,7 +105,7 @@ public class MainController {
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);
@@ -128,7 +130,7 @@ public class MainController {
             @RequestParam String estimate,
             @AuthenticationPrincipal User user,
             Model model
-    ) throws ParseException {
+    ) {
         if (user.getRole() == UserRole.DEVELOPER) {
             if (user.getUsername().equals(authorName)) {
                 taskService.editTask(id, title, priority, state, estimate);
@@ -139,7 +141,7 @@ public class MainController {
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);
@@ -165,7 +167,7 @@ public class MainController {
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);
@@ -185,13 +187,12 @@ public class MainController {
             @RequestParam String taskId,
             @AuthenticationPrincipal User user,
             Model model
-    ){
-        Integer taskIdInt = Integer.valueOf(taskId);
-        taskRepo.deleteTaskFromSprint(taskIdInt);
+    ) {
+        taskRepo.deleteTaskFromSprint(taskId);
 
-        if (sprintService.getActiveSprint() != null) {
-            Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+        Sprint sprint = sprintService.getActiveSprint();
+        if (sprint != null) {
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);
@@ -217,7 +218,7 @@ public class MainController {
 
         if (sprintService.getActiveSprint() != null) {
             Sprint sprint = sprintService.getActiveSprint();
-            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId());
+            List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprint.getId().toString());
 
             model.addAttribute("sprintTasks", sprintTasks);
             model.addAttribute("sprint", sprint);

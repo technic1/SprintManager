@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -36,10 +35,8 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        Integer sprintIdInt = Integer.valueOf(sprintId);
-
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -59,12 +56,11 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        Integer taskIdInt = Integer.valueOf(taskId);
-        taskRepo.deleteTaskFromSprint(taskIdInt);
+        taskRepo.deleteTaskFromSprint(taskId);
 
         Integer sprintIdInt = Integer.valueOf(sprintId);
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -88,7 +84,7 @@ public class SprintController {
             @RequestParam String estimate,
             @AuthenticationPrincipal User user,
             Model model
-    ) throws ParseException {
+    ) {
         if (user.getRole() == UserRole.DEVELOPER) {
             if (user.getUsername().equals(authorName)) {
                 taskService.editTask(id, title, priority, state, estimate);
@@ -97,9 +93,8 @@ public class SprintController {
             }
         }
 
-        Integer sprintIdInt = Integer.valueOf(sprintId);
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -120,10 +115,9 @@ public class SprintController {
             Model model
     ) {
         sprintService.addTaskToSprint(sprintId, taskId);
-        Integer sprintIdInt = Integer.valueOf(sprintId);
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -145,7 +139,7 @@ public class SprintController {
         Integer sprintIdInt = Integer.valueOf(sprintId);
 
         boolean haveActiveSprint = sprintService.haveActiveSprint();
-        boolean haveTasks = sprintService.haveTasks(sprintIdInt);
+        boolean haveTasks = sprintService.haveTasks(sprintId);
         if (haveActiveSprint) {
             model.addAttribute("errorOneActiveSprint", "Can't be active, close existing active sprint");
         }
@@ -153,11 +147,11 @@ public class SprintController {
             model.addAttribute("errorNoTasksInSprint", "Can't be started, add some tasks in sprint");
         }
         if (!haveActiveSprint && haveTasks) {
-            sprintService.startSprint(sprintIdInt);
+            sprintService.startSprint(sprintId);
         }
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -176,17 +170,15 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        Integer sprintIdInt = Integer.valueOf(sprintId);
-
-        if (!sprintService.haveOpenTasksBySprintId(sprintIdInt)) {
-            sprintService.finishSprint(sprintIdInt);
+        if (!sprintService.haveOpenTasksBySprintId(sprintId)) {
+            sprintService.finishSprint(sprintId);
         } else {
             model.addAttribute("errorSetFinished",
                     "Can't be finished, close existing opened tasks or put them in backlog");
         }
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -207,12 +199,15 @@ public class SprintController {
             @RequestParam String endDateExpect,
             @AuthenticationPrincipal User user,
             Model model
-    ) throws ParseException {
-        Integer sprintIdInt = Integer.valueOf(sprintId);
-        sprintService.editSprint(sprintId, title, startDate, endDateExpect);
+    ) {
+        try {
+            sprintService.editSprint(sprintId, title, startDate, endDateExpect);
+        } catch (RuntimeException e) {
+            return "/sprint/{sprintId}";
+        }
 
-        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintIdInt);
-        Sprint sprint = sprintService.getSprintById(sprintIdInt);
+        List<Task> sprintTasks = taskRepo.getAllTasksBySprintId(sprintId);
+        Sprint sprint = sprintService.getSprintById(sprintId);
         List<Task> backlogTasks = taskRepo.getAllTasksFromBacklog();
         List<Sprint> sprints = sprintService.getAllSprints();
 
@@ -244,9 +239,14 @@ public class SprintController {
             @RequestParam String endDateExpect,
             @AuthenticationPrincipal User user,
             Model model
-    ) throws ParseException {
+    ) {
+        Sprint sprint = null;
+        try {
+            sprint = sprintService.insertNewSprint(user, title, startDate, endDateExpect);
+        } catch (RuntimeException e) {
+            return "/newsprint";
+        }
 
-        Sprint sprint = sprintService.insertNewSprint(user, title, startDate, endDateExpect);
         String url = "sprint/" + sprint.getId();
         List<Sprint> sprints = sprintService.getAllSprints();
 
