@@ -95,11 +95,12 @@ public class SprintRepo {
                 new Object[] { id }
         );
         Map<String, Integer> map = new HashMap<>();
-        try {
-            map.put("sum", ((Long) stringObjectMap.get("sum")).intValue());
-        } catch (NullPointerException e) {
-            map.put("sum", 0);
-        }
+
+        Object sum = stringObjectMap.get("sum");
+        if (sum != null)  {
+            map.put("sum", ((Long) sum).intValue());
+        } else map.put("sum", 0);
+
         map.put("count", ((Long) stringObjectMap.get("count")).intValue());
         return map;
     }

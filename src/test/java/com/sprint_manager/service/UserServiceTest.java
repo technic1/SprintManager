@@ -49,7 +49,6 @@ class UserServiceTest {
         when(userRepo.findByUserName("user")).thenReturn(new User());
 
         boolean isUserCreated = userService.addUser(username, role, password);
-        ArgumentCaptor
         verify(userRepo, times(0)).saveUser(any(User.class));
         Assert.assertFalse(isUserCreated);
     }
