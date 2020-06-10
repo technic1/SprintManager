@@ -70,6 +70,8 @@ public class MainController {
             } else {
                 model.addAttribute("errorAccessDenied", "Access denied!");
             }
+        } else if (user.getRole() == UserRole.ANALYST){
+            taskService.deleteTask(id);
         }
 
         sprintService.getActiveSprintModel(model);
@@ -89,7 +91,7 @@ public class MainController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        taskService.editTaskIfDeveloperHaveAccess(model, user, authorName, id, title, priority, state, estimate);
+        taskService.editTaskIfHaveAccess(model, user, authorName, id, title, priority, state, estimate);
         sprintService.getActiveSprintModel(model);
         sprintService.getBacklogModel(model, user);
 
@@ -123,7 +125,7 @@ public class MainController {
     }
 
 
-    @PostMapping("/registration")
+    @PostMapping("/registration/add")
     public String addUser (
             @RequestParam String username,
             @RequestParam String role,

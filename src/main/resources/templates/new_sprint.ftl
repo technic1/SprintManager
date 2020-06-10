@@ -1,8 +1,13 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
+<#if errorDate??>
+<div class="alert alert-warning" role="alert">
+    ${errorDate}
+</div>
+</#if>
 <br>
-<form method="post" action="/new">
+<form method="post" action="/newsprint/new">
     <div class="form-group row">
         <label for="formGroupExampleInput" class="col-2 col-form-label">Title</label>
         <div class="col-4">

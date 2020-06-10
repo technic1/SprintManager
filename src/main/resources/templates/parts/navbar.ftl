@@ -20,7 +20,10 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <#if sprints??>
                             <#list sprints as sprint>
-                                <a class="dropdown-item" href="/sprint/${sprint.id}">${sprint.title}</a>
+                        <a class="dropdown-item <#if sprint.sprintState == "STARTED">text-success
+                        <#elseif sprint.sprintState == "FINISHED">text-danger
+                        <#else>text-muted
+                    </#if>" href="/sprint/${sprint.id}">${sprint.title}</a>
                             </#list>
                         </#if>
                     </div>

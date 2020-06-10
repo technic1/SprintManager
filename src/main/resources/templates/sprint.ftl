@@ -59,7 +59,7 @@
         </tr>
         <tr class="collapse multi-collapse" id="sprint${sprint.id}">
             <td colspan="9">
-                <form name="form2" method="post" action="/edit-sprint">
+                <form name="form2" method="post" action="/sprint/${sprint.id}/edit-sprint">
                     <div class="form-group row">
                         <label for="formGroupExampleInput" class="col-2 col-form-label">Title</label>
                         <div class="col-4">
@@ -85,14 +85,14 @@
         </tr>
     </tbody>
 </table>
-<#if sprint.sprintState != "STARTED">
+<#if sprint.sprintState != "STARTED" && sprint.sprintState != "FINISHED">
     <form name="form2" method="post" action="/sprint/${sprint.id}/start">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button class="btn btn-primary" type="submit">Start</button>
     </form>
 </#if>
 <br>
-<#if sprint.sprintState != "FINISHED">
+<#if sprint.sprintState != "FINISHED" && sprint.sprintState != "DRAFT">
     <form name="form2" method="post" action="/sprint/${sprint.id}/finish">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button class="btn btn-primary" type="submit">Close</button>

@@ -35,19 +35,15 @@
             <td>${task.taskPriority}</td>
             <td>
                 <#if task.taskState == "OPEN">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    ${task.taskState}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <form name="form2" method="post" action="/close ">
-                        <input hidden name="id" type="text" value="${task.id}">
-                        <input type="hidden" name="_csrf" value="${_csrf.token}">
-                        <button class="btn btn-primary" type="submit">Close</button>
-                    </form>
-                </div>
+                ${task.taskState}
+                <form name="form2" method="post" action="/close ">
+                    <input hidden name="id" type="text" value="${task.id}">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <button class="btn btn-primary" type="submit">Close</button>
+                </form>
                 <#else>
-                    ${task.taskState}
-                </#if>
+                ${task.taskState}
+            </#if>
 </td>
             <td>${task.estimate}</td>
             <td>${task.startDate}</td>
@@ -65,9 +61,9 @@
         <tr class="collapse multi-collapse" id="multiCollapseExample${task.id}">
             <td colspan="7">
                 <div class="">
-                    <form method="post">
-
+                    <form method="post" action="/edit">
                         <input hidden name="id" type="text" value="${task.id}">
+                        <input hidden name="authorName" type="text" value="${task.authorName}">
                         <div class="form-group col-sm-6">
                             <input class="form-control" id="exampleFormControlInput1" type="text" name="title" placeholder="Enter task title">
                         </div>
@@ -89,7 +85,7 @@
                             <input class="form-control" type="text" name="estimate" placeholder="Enter estimate">
                         </div>
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
-                        <button action="/edit" class="btn btn-primary" type="submit">Edit</button>
+                        <button class="btn btn-primary" type="submit">Edit</button>
                 </div>
                 </form>
                 </div>
@@ -164,16 +160,12 @@
                     <td>${task.taskPriority}</td>
                     <td>
                             <#if task.taskState == "OPEN">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 ${task.taskState}
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <form name="form2" method="post" action="/close ">
                                     <input hidden name="id" type="text" value="${task.id}">
                                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                                     <button class="btn btn-primary" type="submit">Close</button>
                                 </form>
-                            </div>
                             <#else>
                             ${task.taskState}
                         </#if>

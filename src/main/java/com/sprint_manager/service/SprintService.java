@@ -5,6 +5,7 @@ import com.sprint_manager.repos.SprintRepo;
 import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.text.ParseException;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class SprintService {
     @Autowired
     private SprintRepo sprintRepo;
@@ -29,24 +31,19 @@ public class SprintService {
         taskRepo.updateTaskSprintId(task);
     }
 
-    public Sprint insertNewSprint(User user, String title, String start, String end) throws RuntimeException {
+    public Sprint insertNewSprint(User user, String title, String start, String end)  {
         Sprint sprint = new Sprint();
 
         sprint.setTitle(title);
         sprint.setAuthorId(user.getId());
 
         Date startDate = null;
-        try {
-            startDate = new SimpleDateFormat("yyyy-MM-dd").parse(start);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
         Date endDateExpect = null;
         try {
+            startDate = new SimpleDateFormat("yyyy-MM-dd").parse(start);
             endDateExpect = new SimpleDateFormat("yyyy-MM-dd").parse(end);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("empty date");
         }
 
         sprint.setStartDate(startDate);
@@ -91,9 +88,7 @@ public class SprintService {
     }
 
     public boolean haveActiveSprint() {
-        Sprint activeSprint = sprintRepo.getActiveSprint();
-
-        return activeSprint != null;
+        return sprintRepo.getActiveSprint() != null;
     }
 
     public boolean haveOpenTasksBySprintId(String sprintId) {
@@ -105,7 +100,7 @@ public class SprintService {
     }
 
     public Sprint getActiveSprint() {
-        return sprintRepo.getActiveSprint();
+            return sprintRepo.getActiveSprint();
     }
 
     public boolean haveTasks(String sprintId) {
@@ -115,23 +110,19 @@ public class SprintService {
         return  allTasksBySprintId.size() > 0;
     }
 
-    public boolean editSprint(String sprintId, String title, String startDate, String endDateExpect) throws RuntimeException {
+    public boolean editSprint(Model model, String sprintId, String title, String startDate, String endDateExpect) {
         Sprint sprint = new Sprint();
         sprint.setId(Integer.valueOf(sprintId));
         sprint.setTitle(title);
 
         Date start = null;
-        try {
-            start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-        } catch (ParseException e) {
-            throw new RuntimeException("empty start date");
-        }
-
         Date end = null;
         try {
+            start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
             end = new SimpleDateFormat("yyyy-MM-dd").parse(endDateExpect);
         } catch (ParseException e) {
-            throw new RuntimeException("empty end date");
+            model.addAttribute("errorDate", e.getMessage());
+            return false;
         }
 
         sprint.setStartDate(start);

@@ -1,9 +1,7 @@
 package com.sprint_manager.controller;
 
 import com.sprint_manager.domain.Sprint;
-import com.sprint_manager.domain.Task;
 import com.sprint_manager.domain.User;
-import com.sprint_manager.domain.UserRole;
 import com.sprint_manager.repos.TaskRepo;
 import com.sprint_manager.service.SprintService;
 import com.sprint_manager.service.TaskService;
@@ -67,7 +65,7 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        taskService.editTaskIfDeveloperHaveAccess(model, user, authorName, id, title, priority, state, estimate);
+        taskService.editTaskIfHaveAccess(model, user, authorName, id, title, priority, state, estimate);
         sprintService.getSprintModel(model, sprintId);
         sprintService.getBacklogModel(model, user);
 
@@ -140,11 +138,7 @@ public class SprintController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        try {
-            sprintService.editSprint(sprintId, title, startDate, endDateExpect);
-        } catch (RuntimeException e) {
-            model.addAttribute("errorDate", e.getMessage());
-        }
+        sprintService.editSprint(model, sprintId, title, startDate, endDateExpect);
         sprintService.getSprintModel(model, sprintId);
         sprintService.getBacklogModel(model, user);
 
@@ -179,10 +173,10 @@ public class SprintController {
             sprint = sprintService.insertNewSprint(user, title, startDate, endDateExpect);
         } catch (RuntimeException e) {
             model.addAttribute("errorDate", e.getMessage());
-            return "newsprint";
+            return "new_sprint";
         }
 
-        String url = "sprint/" + sprint.getId();
+        String url = "/sprint/" + sprint.getId();
 
         return "redirect:" + url;
     }

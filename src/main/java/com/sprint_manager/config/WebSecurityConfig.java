@@ -5,7 +5,6 @@ import com.sprint_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,19 +23,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers( "/registration").permitAll()
-                    .antMatchers("/newsprint")
-                        .hasAuthority(UserRole.MANAGER.toString())
+                    .antMatchers( "/registration", "/registration/add").permitAll()
                     .antMatchers("/sprint/{sprintId:\\d+}/delete",
                             "/sprint/{sprintId:\\d+}/add",
                             "/delete-from-sprint")
                             .hasAnyAuthority(UserRole.ANALYST.toString(), UserRole.MANAGER.toString())
-                    .antMatchers(HttpMethod.POST,
-                            "/sprint/{\\d+}/start",
-                            "/sprint/{sprintId:\\d+}/finish",
-                            "/sprint/{sprintId:\\d+}/edit-sprint")
+                    .antMatchers(
+                            "/sprint/{\\d+}/start", "/sprint/{sprintId:\\d+}/finish",
+                            "/sprint/{sprintId:\\d+}/edit-sprint", "/newsprint")
                         .hasAuthority(UserRole.MANAGER.toString())
-                    .antMatchers("/add", "/edit", "/delete", "/close")
+                    .antMatchers("/add", "/edit", "/delete", "/close", "/sprint/{sprintId:\\d+}/edit")
                         .hasAnyAuthority(UserRole.ANALYST.toString(), UserRole.DEVELOPER.toString())
                     .anyRequest().authenticated()
                 .and()

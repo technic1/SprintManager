@@ -78,12 +78,11 @@ public class TaskRepo {
                         "t.date_end, t.state, t.title, t.number, t.number_int, " +
                         "t.estimate, t.priority  " +
                         "from tasks as t inner join users on t.author_id = users.id " +
-                        "where t.sprint_id is null order by t.number",
+                        "where t.sprint_id is null order by t.number_int",
                 new TaskMapper()
         );
     }
 
-    //adding sprint_id to task
     public boolean updateTaskSprintId(Task task) {
         return jdbcTemplate.update(
                 "update tasks set sprint_id = ? where id = ?",

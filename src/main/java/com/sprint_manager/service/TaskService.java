@@ -4,11 +4,13 @@ import com.sprint_manager.domain.*;
 import com.sprint_manager.repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.util.Date;
 
 @Service
+@Transactional()
 public class TaskService {
     @Autowired
     private TaskRepo taskRepo;
@@ -62,7 +64,7 @@ public class TaskService {
         return taskRepo.updateTaskStateAndEndDate(TaskState.CLOSED.toString(), task);
     }
 
-    public void editTaskIfDeveloperHaveAccess(Model model, User user, String authorName, String id, String title,
+    public void editTaskIfHaveAccess(Model model, User user, String authorName, String id, String title,
                                               String priority, String state,String estimate) {
         if (user.getRole() == UserRole.DEVELOPER) {
             if (user.getUsername().equals(authorName)) {
@@ -70,6 +72,8 @@ public class TaskService {
             } else {
                 model.addAttribute("errorAccessDenied", "Access denied!");
             }
+        } else if (user.getRole() == UserRole.ANALYST) {
+            editTask(id, title, priority, state, estimate);
         }
     }
 }

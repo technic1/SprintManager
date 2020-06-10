@@ -112,7 +112,6 @@ public class Task {
     }
 
     public Date getEndDate() {
-//        return endDate==null?null:endDate.toString();
         return endDate;
     }
 

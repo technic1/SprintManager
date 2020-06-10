@@ -9,11 +9,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
@@ -23,21 +25,17 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User usersFromDb = userRepo.findByUserName(username);
+        User userFromDb = userRepo.findByUserName(username);
 
-        if (usersFromDb == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
+        if (userFromDb == null) throw new UsernameNotFoundException("User not found");
 
-        return usersFromDb;
+        return userFromDb;
     }
 
     public boolean addUser(String username, String role, String password) {
-        User usersFromDb = userRepo.findByUserName(username);
+        User userFromDb = userRepo.findByUserName(username);
+        if (userFromDb != null) return false;
 
-        if (usersFromDb != null) {
-            return false;
-        }
         User user = new User();
 
         Set<UserRole> roles = new HashSet<>();

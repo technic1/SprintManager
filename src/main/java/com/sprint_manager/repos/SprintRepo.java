@@ -4,7 +4,7 @@ import com.sprint_manager.domain.Sprint;
 import com.sprint_manager.domain.SprintMapper;
 import com.sprint_manager.domain.SprintState;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +19,7 @@ public class SprintRepo {
         return jdbcTemplate.query(
                 "select sprints.id, users.full_name, sprints.title, sprints.state, " +
                         "sprints.date_start, sprints.date_end_expect, sprints.date_end_fact" +
-                        "  from sprints inner join users on sprints.author_id = users.id",
+                        "  from sprints inner join users on sprints.author_id = users.id order by sprints.state desc",
                 new SprintMapper()
         );
     }
@@ -68,18 +68,14 @@ public class SprintRepo {
     }
 
     public Sprint getActiveSprint() {
-        try {
-            return jdbcTemplate.queryForObject(
-                    "select s.id, u.full_name, s.title, s.state, " +
-                            "s.date_start, s.date_end_expect, s.date_end_fact " +
-                            "from sprints as s inner join users as u on s.author_id = u.id " +
-                            "where s.state = ?",
-                    new Object[] { SprintState.STARTED.toString() },
-                    new SprintMapper()
-            );
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return null;
-        }
+        return DataAccessUtils.singleResult(jdbcTemplate.query(
+                "select s.id, u.full_name, s.title, s.state, " +
+                        "s.date_start, s.date_end_expect, s.date_end_fact " +
+                        "from sprints as s inner join users as u on s.author_id = u.id " +
+                        "where s.state = ?",
+                new Object[] { SprintState.STARTED.toString() },
+                new SprintMapper()
+        ));
     }
 
     public boolean updateSprint(Sprint sprint) {
@@ -99,7 +95,11 @@ public class SprintRepo {
                 new Object[] { id }
         );
         Map<String, Integer> map = new HashMap<>();
-        map.put("sum", ((Long) stringObjectMap.get("sum")).intValue());
+        try {
+            map.put("sum", ((Long) stringObjectMap.get("sum")).intValue());
+        } catch (NullPointerException e) {
+            map.put("sum", 0);
+        }
         map.put("count", ((Long) stringObjectMap.get("count")).intValue());
         return map;
     }

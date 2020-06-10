@@ -6,17 +6,12 @@ import com.sprint_manager.domain.User;
 import com.sprint_manager.repos.TaskRepo;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-//@RunWith(SpringRunner.class)
 @SpringBootTest
 class TaskServiceTest {
     @Autowired
@@ -27,16 +22,21 @@ class TaskServiceTest {
 
     @Test
     void addTask() {
-        Task task = new Task();
         User user = new User();
         user.setId(1);
 
-//        boolean isTaskCreated = taskService.addTask(user, task);
+        String title = "task 1";
+        String priority = "HIGH";
+        String estimate = "2";
 
-        Assert.assertNotNull(task.getStartDate());
-        Assert.assertNotNull(task.getAuthorId());
-        Assert.assertEquals(TaskState.OPEN.toString(), task.getTaskState());
-//        Assert.assertTrue(isTaskCreated);
+        Task task = Mockito.mock(Task.class);
 
+        boolean isTaskCreated = taskService.addTask(user, title, priority, estimate);
+        Assert.assertEquals(task.getTitle(), title);
+        Assert.assertEquals(task.getTaskPriority(), priority);
+        Assert.assertEquals(task.getEstimate(), Integer.valueOf(estimate));
+
+        Mockito.when(taskService.addTask(user, title, priority, estimate));
+        Mockito.verify(taskRepo, Mockito.times(1)).createTask(ArgumentMatchers.any(Task.class));
     }
 }
